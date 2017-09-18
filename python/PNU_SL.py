@@ -60,7 +60,7 @@ def PNU_SL(x, y, prior, eta_list, n_fold=5, model='gauss',
                 for ite_eta, eta in enumerate(eta_list):
                     for ite_lambda, lam in enumerate(lambda_list):
                         theta_cv = solve(H_ptr, H_ntr, H_utr, h_ptr, h_ntr, h_utr,
-                                         lam, eta, model)
+                                         lam, eta, model, b)
                         gp, gn, gu = K_pte.dot(theta_cv), K_nte.dot(theta_cv), \
                                      K_ute.dot(theta_cv)
                         score_cv_fold[ite_sigma, ite_lambda, ite_eta, ite_fold] \
@@ -86,7 +86,7 @@ def PNU_SL(x, y, prior, eta_list, n_fold=5, model='gauss',
             sigma, lam = sigma_list[sigma_index], lambda_list[lambda_index]
             K_p, K_n, K_u = ker(d_p, d_n, d_u, sigma, model)
             H_p, H_n, H_u, h_p, h_n, h_u = pre_solve(K_p, K_n, K_u, prior)
-            theta = solve(H_p, H_n, H_u, h_p, h_n, h_u, lam, eta, model)
+            theta = solve(H_p, H_n, H_u, h_p, h_n, h_u, lam, eta, model, b)
             funcs.append(partial(make_func, theta, x_c, sigma, model))
 
     sigma, lam = sigma_list[best_sigma_index], lambda_list[best_lambda_index]
@@ -102,7 +102,7 @@ def PNU_SL(x, y, prior, eta_list, n_fold=5, model='gauss',
     if nargout < 3:
         K_p, K_n, K_u = ker(d_p, d_n, d_u, sigma, model)
         H_p, H_n, H_u, h_p, h_n, h_u = pre_solve(K_p, K_n, K_u, prior)
-        theta = solve(H_p, H_n, H_u, h_p, h_n, h_u, lam, eta, model)
+        theta = solve(H_p, H_n, H_u, h_p, h_n, h_u, lam, eta, model, b)
         f_dec = partial(make_func, theta, x_c, sigma, model)
         if nargout == 1:
             return f_dec
@@ -115,17 +115,16 @@ def PNU_SL(x, y, prior, eta_list, n_fold=5, model='gauss',
 
 def pre_solve(K_p, K_n, K_u, prior):
     n_p, n_n, n_u = K_p.shape[0], K_n.shape[1], K_u.shape[0]
-    H_p = prior*(K_p.T.dot(K_p))/n_p
-    H_n = (1-prior)*(K_n.T.dot(K_n))/n_n
-    H_u = (K_u.T.dot(K_u))/n_u
-    h_p = prior*np.mean(K_p, axis=0)
-    h_n = (1-prior)*np.mean(K_n, axis=0)
-    h_u = np.mean(K_u, axis=0)
+    H_p = prior*(K_p.T.dot(K_p))/n_p if n_p != 0 else 0
+    H_n = (1-prior)*(K_n.T.dot(K_n))/n_n if n_n != 0 else 0
+    H_u = (K_u.T.dot(K_u))/n_u if n_u != 0 else 0
+    h_p = prior*np.mean(K_p, axis=0) if n_p != 0 else 0
+    h_n = (1-prior)*np.mean(K_n, axis=0) if n_n != 0 else 0
+    h_u = np.mean(K_u, axis=0) if n_u != 0 else 0
     return H_p, H_n, H_u, h_p, h_n, h_u
 
 
-def solve(H_p, H_n, H_u, h_p, h_n, h_u, lam, eta, model):
-    b = H_p.shape[0]
+def solve(H_p, H_n, H_u, h_p, h_n, h_u, lam, eta, model, b):
     Reg = lam*np.eye(b)
     if model == 'lm':
         Reg[b-1, b-1] = 0

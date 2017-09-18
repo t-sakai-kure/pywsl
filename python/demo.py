@@ -3,6 +3,9 @@
 import numpy as np
 import scipy as sp
 import matplotlib.pyplot as plt
+import seaborn as sns
+sns.set(font_scale=2.0, rc={"lines.linewidth": 4.0})
+sns.set_style('ticks')
 
 import PNU_SL as pnu
 
@@ -36,6 +39,8 @@ def gendata(n_l, prior_l, n_u, prior_u, n_t):
 
 
 if __name__ == "__main__":
+    np.random.seed(0)
+    
     n_l = 10
     n_u = 200
     n_t = 1000
@@ -60,6 +65,7 @@ if __name__ == "__main__":
         if errs1[ite] < best_err:
             best_err = errs1[ite]
             best_w = outs['w']
+            best_x, best_y = x, y
 
         for ite_eta in range(len(eta_list)):
             errs2[ite, ite_eta] = 100*calc_err(funcs[ite_eta],
@@ -68,15 +74,18 @@ if __name__ == "__main__":
 
     print(np.mean(errs1))
 
-    
-    x_p = x[y == +1, :]
-    x_n = x[y == -1, :]
-    x_u = x[y ==  0, :]
+
+    x_p = best_x[best_y == +1, :]
+    x_n = best_x[best_y == -1, :]
+    x_u = best_x[best_y ==  0, :]
+
 
     fig1 = plt.figure(1)
-    plt.plot(x_u[:, 0], x_u[:, 1], 'k.')
-    plt.plot(x_p[:, 0], x_p[:, 1], 'bo')
-    plt.plot(x_n[:, 0], x_n[:, 1], 'rx')
+    plt.scatter(x_u[:, 0], x_u[:, 1], c='k', marker='.')
+    plt.scatter(x_p[:, 0], x_p[:, 1], facecolors='none', edgecolor='b',
+                marker='o', s=300, lw=5)
+    plt.scatter(x_n[:, 0], x_n[:, 1], c='r',
+                marker='x', s=300, lw=5)
 
     u1, u2 = np.min(x[:, 0]), np.max(x[:, 0])
     v1_opt = np.log(prior_u/(1-prior_u))/2 - u1
@@ -88,11 +97,15 @@ if __name__ == "__main__":
     v1_est = (intercept - w[0]*u1)/w[1]
     v2_est = (intercept - w[0]*u2)/w[1]
     plt.plot([u1, u2], [v1_est, v2_est])
+    plt.xlim(-3, 3)
+    plt.ylim(-3, 3)
+    sns.despine()
 
-
+    ###
     fig2 = plt.figure(2)
     plt.errorbar(eta_list, np.mean(errs2, axis=0),
-                yerr=np.std(errs2, axis=0)/np.sqrt(n_trial))
+                 yerr=np.std(errs2, axis=0)/np.sqrt(n_trial))
+    sns.despine()
     
     plt.show()
     
