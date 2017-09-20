@@ -4,7 +4,6 @@ import numpy as np
 import scipy as sp
 
 
-
 def cpe(xl, y, xu, alpha=1):
     c = np.sort(np.unique(y))
     n_c = len(c)

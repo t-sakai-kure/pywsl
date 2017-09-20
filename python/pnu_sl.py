@@ -48,7 +48,7 @@ def PNU_SL(x, y, prior, eta_list, n_fold=5, model='gauss',
             K_p, K_n, K_u = ker(d_p, d_n, d_u, sigma, model)
 
             for ite_fold in range(n_fold):
-                H_ptr, H_ntr, H_utr, h_ptr, h_ntr, h_utr = pre_solve(
+                H_ptr, H_ntr, H_utr, h_ptr, h_ntr, h_utr = make_mat(
                     K_p[cv_index_p != ite_fold, :],
                     K_n[cv_index_n != ite_fold, :],
                     K_u[cv_index_u != ite_fold, :], prior)
@@ -85,7 +85,7 @@ def PNU_SL(x, y, prior, eta_list, n_fold=5, model='gauss',
         if nargout == 3:
             sigma, lam = sigma_list[sigma_index], lambda_list[lambda_index]
             K_p, K_n, K_u = ker(d_p, d_n, d_u, sigma, model)
-            H_p, H_n, H_u, h_p, h_n, h_u = pre_solve(K_p, K_n, K_u, prior)
+            H_p, H_n, H_u, h_p, h_n, h_u = make_mat(K_p, K_n, K_u, prior)
             theta = solve(H_p, H_n, H_u, h_p, h_n, h_u, lam, eta, model, b)
             funcs.append(partial(make_func, theta, x_c, sigma, model))
 
@@ -101,7 +101,7 @@ def PNU_SL(x, y, prior, eta_list, n_fold=5, model='gauss',
                 'w': theta}
     if nargout < 3:
         K_p, K_n, K_u = ker(d_p, d_n, d_u, sigma, model)
-        H_p, H_n, H_u, h_p, h_n, h_u = pre_solve(K_p, K_n, K_u, prior)
+        H_p, H_n, H_u, h_p, h_n, h_u = make_mat(K_p, K_n, K_u, prior)
         theta = solve(H_p, H_n, H_u, h_p, h_n, h_u, lam, eta, model, b)
         f_dec = partial(make_func, theta, x_c, sigma, model)
         if nargout == 1:
@@ -113,7 +113,7 @@ def PNU_SL(x, y, prior, eta_list, n_fold=5, model='gauss',
         return f_dec, outs, funcs
 
 
-def pre_solve(K_p, K_n, K_u, prior):
+def make_mat(K_p, K_n, K_u, prior):
     n_p, n_n, n_u = K_p.shape[0], K_n.shape[1], K_u.shape[0]
     H_p = prior*(K_p.T.dot(K_p))/n_p if n_p != 0 else 0
     H_n = (1-prior)*(K_n.T.dot(K_n))/n_n if n_n != 0 else 0
