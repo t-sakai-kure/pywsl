@@ -7,7 +7,8 @@ import seaborn as sns
 sns.set(font_scale=2.0, rc={"lines.linewidth": 4.0})
 sns.set_style('ticks')
 
-import PNU_SL as pnu
+import pnu_sl as pnu
+import cpe_ene as cpe
 
 
 def calc_err(f_dec, x_tp, x_tn, prior):
@@ -58,7 +59,7 @@ if __name__ == "__main__":
     priors = np.empty(n_trial)
     for ite in range(n_trial):
         x, y, x_tp, x_tn = gendata(n_l, prior_l, n_u, prior_u, n_t)
-        priorh = prior_u
+        priorh = cpe.cpe(x[y != 0, :], y[y != 0], x[y == 0, :])
         f_dec, outs, funcs = pnu.PNU_SL(x, y, priorh, eta_list,
                                         model='lm', nargout=3)
         errs1[ite] = 100*calc_err(f_dec, x_tp, x_tn, prior_u)
@@ -72,7 +73,10 @@ if __name__ == "__main__":
                                                x_tp, x_tn, prior_u)
         priors[ite] = priorh
 
-    print(np.mean(errs1))
+    print("Average of misclassification rates: {:.1f} ({:.2f})".format(
+        np.mean(errs1), np.std(errs1)/np.sqrt(n_trial)))
+    print("Average of estimated class-priors: {:.2f} ({:.2f})".format(
+        np.mean(priors), np.std(priors)/np.sqrt(n_trial)))
 
 
     x_p = best_x[best_y == +1, :]
