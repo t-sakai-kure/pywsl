@@ -46,7 +46,7 @@ def alpha_dist(x, c, alpha):
             np.sum(c**2, axis=1, keepdims=True).T - 2*x.dot(c.T)
     
     if alpha == 1:
-        return np.sqrt(dist)
+        return np.sqrt(np.maximum(dist, 0))
     else:
-        return np.power(dist, alpha/2)
+        return np.power(np.maximum(dist, 0), alpha/2)
 
