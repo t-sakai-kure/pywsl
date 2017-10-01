@@ -41,8 +41,10 @@ def PNU_SL(x, y, prior, eta_list, n_fold=5, model='gauss',
                               len(eta_list), n_fold))
     if len(eta_list) == 1 and len(sigma_list) == 1 and \
        len(lambda_list) == 1:
-        score_cv = np.emepty((1, 1, 1))
-        score_cv = -np.inf
+        score_cv = np.empty((1, 1, 1))
+        score_cv[0, 0, 0] = -np.inf
+        best_sigma_index, best_lambda_index, best_eta_index \
+            = 1, 1, 1
     else:
         for ite_sigma, sigma in enumerate(sigma_list):
             K_p, K_n, K_u = ker(d_p, d_n, d_u, sigma, model)

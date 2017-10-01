@@ -40,7 +40,7 @@ def gendata(n_l, prior_l, n_u, prior_u, n_t):
 
 
 if __name__ == "__main__":
-    np.random.seed(0)
+    np.random.seed(1)
     
     n_l = 10
     n_u = 200
@@ -60,7 +60,7 @@ if __name__ == "__main__":
     for ite in range(n_trial):
         x, y, x_tp, x_tn = gendata(n_l, prior_l, n_u, prior_u, n_t)
         priorh = cpe.cpe(x[y != 0, :], y[y != 0], x[y == 0, :])
-        f_dec, outs, funcs = pnu.PNU_SL(x, y, priorh, eta_list,
+        f_dec, outs, funcs = pnu.PNU_SL(x, y, priorh, eta_list, 
                                         model='lm', nargout=3)
         errs1[ite] = 100*calc_err(f_dec, x_tp, x_tn, prior_u)
         if errs1[ite] < best_err:
@@ -104,12 +104,14 @@ if __name__ == "__main__":
     plt.xlim(-3, 3)
     plt.ylim(-3, 3)
     sns.despine()
-
+    plt.savefig('data.pdf')
+    
     ###
     fig2 = plt.figure(2)
     plt.errorbar(eta_list, np.mean(errs2, axis=0),
                  yerr=np.std(errs2, axis=0)/np.sqrt(n_trial))
     sns.despine()
-    
+    plt.savefig('err_curve.pdf')
+
     plt.show()
     
