@@ -13,7 +13,7 @@ def PNU_SL(x, y, prior, eta_list, n_fold=5, model='gauss',
 
     if model == 'gauss':
         b = np.minimum(n_basis, n_u)
-        center_index = np.permutation(n_u)[:b]
+        center_index = np.random.permutation(n_u)[:b]
         x_c = x_u[center_index, :]
         d_p, d_n, d_u = sqdist(x_p, x_c), sqdist(x_n, x_c), sqdist(x_u, x_c)
         if sigma_list is None:
