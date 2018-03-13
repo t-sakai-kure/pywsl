@@ -8,10 +8,11 @@ def PNU_SL(x, y, prior, eta_list, n_fold=5, model='gauss',
            sigma_list=None, lambda_list=np.logspace(-3, 1, 10),
            n_basis=200, nargout=2):
 
-    assert np.array_equal(np.unique(y), [-1, 0, +1]), """Label vector is invalid
-Expected: [-1, 0, +1] == np.unique(y)
-Actual: {} == np.unique(y)
-""".format(np.unique(y))
+    if not np.array_equal(np.unique(y), [-1, 0, +1]):
+        raise ValueError("""Label vector is invalid
+        Expected: [-1, 0, +1] == np.unique(y)
+        Actual: {} == np.unique(y)
+        """.format(np.unique(y)))
 
     x_p, x_n, x_u = x[y == +1, :], x[y == -1, :], x[y ==  0, :]
     n_p, n_n, n_u = x_p.shape[0], x_n.shape[0], x_u.shape[0]

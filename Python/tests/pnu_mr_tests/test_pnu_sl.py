@@ -39,9 +39,8 @@ class TestPNU_SL(unittest.TestCase):
         x, y, x_tp, x_tn = demo.gendata(n_l, prior_l, n_u, prior_u, n_t)
         y[0] = 2
         eta_list = [pnu_sl.calc_etab(np.sum(y == +1), np.sum(y == -1), prior_u)]
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             pnu_sl.PNU_SL(x, y, prior_u, eta_list, model='lm')
-#        self.assertRaises()
 
 
 if __name__ == "__main__":
