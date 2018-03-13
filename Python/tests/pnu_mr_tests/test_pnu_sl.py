@@ -3,8 +3,8 @@ import unittest
 import numpy as np
 import scipy as sp
 
-from PNU.python import pnu_sl
-from PNU.python import demo
+from pnu_mr import pnu_sl
+from pnu_mr import demo
 
 
 class TestPNU_SL(unittest.TestCase):
@@ -14,7 +14,7 @@ class TestPNU_SL(unittest.TestCase):
         n_u, prior_u = 200, .5
         n_t = 100
         eta_list = np.arange(-.9, 1, .1)
-        x, y, x_tp, x_tn = gendata(n_l, prior_l, n_u, prior_u, n_t)
+        x, y, x_tp, x_tn = demo.gendata(n_l, prior_l, n_u, prior_u, n_t)
         f_dec, outs, funcs = pnu_sl.PNU_SL(x, y, prior_u, 
                                            eta_list, model='lm', 
                                            nargout=3)
