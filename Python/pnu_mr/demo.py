@@ -2,6 +2,8 @@
 
 import numpy as np
 import scipy as sp
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import seaborn as sns
 sns.set(font_scale=2.0, rc={"lines.linewidth": 4.0})
@@ -41,7 +43,7 @@ def gendata(n_l, prior_l, n_u, prior_u, n_t):
 
 if __name__ == "__main__":
     np.random.seed(1)
-    
+
     n_l = 10
     n_u = 200
     n_t = 1000

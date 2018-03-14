@@ -9,7 +9,7 @@ def PNU_SL(x, y, prior, eta_list, n_fold=5, model='gauss',
            n_basis=200, nargout=2):
 
     if not np.array_equal(np.unique(y), [-1, 0, +1]):
-        raise ValueError("""Label vector is invalid
+        raise ValueError("""Label vector is invalid.
         Expected: [-1, 0, +1] == np.unique(y)
         Actual: {} == np.unique(y)
         """.format(np.unique(y)))
@@ -19,7 +19,7 @@ def PNU_SL(x, y, prior, eta_list, n_fold=5, model='gauss',
 
     if model == 'gauss':
         b = np.minimum(n_basis, n_u)
-        center_index = np.permutation(n_u)[:b]
+        center_index = np.random.permutation(n_u)[:b]
         x_c = x_u[center_index, :]
         d_p, d_n, d_u = sqdist(x_p, x_c), sqdist(x_n, x_c), sqdist(x_u, x_c)
         if sigma_list is None:
@@ -32,7 +32,7 @@ def PNU_SL(x, y, prior, eta_list, n_fold=5, model='gauss',
                         np.c_[x_u, np.ones(n_u)]
         sigma_list = [1]
     else:
-        raise Exception('Invalid model')
+        raise ValueError('Invalid model')
 
     cv_index_p = (np.arange(n_p, dtype=np.int_)*n_fold)//n_p
     cv_index_p = cv_index_p[np.random.permutation(n_p)]
@@ -85,17 +85,20 @@ def PNU_SL(x, y, prior, eta_list, n_fold=5, model='gauss',
         tmp = np.unravel_index(tmp, sub_score_cv.shape)
         sigma_index, lambda_index = tmp[0], tmp[1]
         score_list[ite_eta] = sub_score_cv[sigma_index, lambda_index]
-        if score_list[ite_eta] < score_best:
-            score_best = score_list[ite_eta]
-            best_sigma_index = sigma_index
-            best_lambda_index = lambda_index
-            best_eta_index  = ite_eta
         if nargout == 3:
             sigma, lam = sigma_list[sigma_index], lambda_list[lambda_index]
             K_p, K_n, K_u = ker(d_p, d_n, d_u, sigma, model)
             H_p, H_n, H_u, h_p, h_n, h_u = make_mat(K_p, K_n, K_u, prior)
             theta = solve(H_p, H_n, H_u, h_p, h_n, h_u, lam, eta, model, b)
             funcs.append(partial(make_func, theta, x_c, sigma, model))
+        if score_list[ite_eta] < score_best:
+            score_best = score_list[ite_eta]
+            best_sigma_index = sigma_index
+            best_lambda_index = lambda_index
+            best_eta_index  = ite_eta
+            if nargout > 2:
+                best_theta = theta
+
 
     sigma, lam = sigma_list[best_sigma_index], lambda_list[best_lambda_index]
     eta = eta_list[best_eta_index]
@@ -105,8 +108,7 @@ def PNU_SL(x, y, prior, eta_list, n_fold=5, model='gauss',
                 'lambda_index': best_lambda_index,
                 'eta_index': best_eta_index,
                 'score_table': score_cv,
-                'score_list': score_list,
-                'w': theta}
+                'score_list': score_list}
     if nargout < 3:
         K_p, K_n, K_u = ker(d_p, d_n, d_u, sigma, model)
         H_p, H_n, H_u, h_p, h_n, h_u = make_mat(K_p, K_n, K_u, prior)
@@ -115,9 +117,11 @@ def PNU_SL(x, y, prior, eta_list, n_fold=5, model='gauss',
         if nargout == 1:
             return f_dec
         else:
+            outs['w'] = theta
             return f_dec, outs
     if nargout > 2:
         f_dec = funcs[best_eta_index]
+        outs['w'] = best_theta
         return f_dec, outs, funcs
 
 
