@@ -9,8 +9,10 @@ import seaborn as sns
 sns.set(font_scale=2.0, rc={"lines.linewidth": 4.0})
 sns.set_style('ticks')
 
-import pnu_sl as pnu
-import cpe_ene as cpe
+import sys
+sys.path.append('..')
+import pnu_mr.pnu_sl as pnu
+import cpe.cpe_ene as cpe
 
 
 def calc_err(f_dec, x_tp, x_tn, prior):
