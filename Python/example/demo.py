@@ -11,8 +11,8 @@ sns.set_style('ticks')
 
 import sys
 sys.path.append('..')
-import pnu_mr.pnu_sl as pnu
-import cpe.cpe_ene as cpe
+import pywsl.pnu_mr.pnu_sl as pnu
+import pywsl.cpe.cpe_ene as cpe
 
 
 def calc_err(f_dec, x_tp, x_tn, prior):
