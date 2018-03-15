@@ -103,9 +103,9 @@ class TestPNU_SL(unittest.TestCase):
         n_l, prior_l = 30, .3
         n_u, prior_u = 200, .5
         n_t = 100
-        eta_list = [pnu_sl.calc_etab(np.sum(y == +1), np.sum(y == -1), prior_u)]
         lambda_list = [.1]
         x, y, x_tp, x_tn = gendata(n_l, prior_l, n_u, prior_u, n_t)
+        eta_list = [pnu_sl.calc_etab(np.sum(y == +1), np.sum(y == -1), prior_u)]
         f_dec, outs, funcs = pnu_sl.PNU_SL(x, y, prior_u, 
                                            eta_list, model='gauss', 
                                            lambda_list=lambda_list,
