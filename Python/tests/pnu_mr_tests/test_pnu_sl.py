@@ -3,7 +3,7 @@ import unittest
 import numpy as np
 import scipy as sp
 
-from pnu_mr import pnu_sl
+from pywsl.pnu_mr import pnu_sl
 
 
 def calc_err(f_dec, x_tp, x_tn, prior):

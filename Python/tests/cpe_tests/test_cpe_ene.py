@@ -2,7 +2,7 @@ import numpy as np
 import scipy as sp
 import unittest
 
-import cpe.cpe_ene
+import pywsl.cpe.cpe_ene
 
 
 class TestCpe_Ene(unittest.TestCase):
