@@ -100,11 +100,10 @@ class TestPNU_SL(unittest.TestCase):
 
 
     def test_gauss_model(self):
-        return
         n_l, prior_l = 30, .3
         n_u, prior_u = 200, .5
         n_t = 100
-        eta_list = np.arange(-.9, 1, .1)
+        eta_list = [pnu_sl.calc_etab(np.sum(y == +1), np.sum(y == -1), prior_u)]
         lambda_list = [.1]
         x, y, x_tp, x_tn = gendata(n_l, prior_l, n_u, prior_u, n_t)
         f_dec, outs, funcs = pnu_sl.PNU_SL(x, y, prior_u, 
