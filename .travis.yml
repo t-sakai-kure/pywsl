@@ -3,6 +3,14 @@ language: python
 python:
   - 3.6
 
+matrix:
+  include:
+    addons:
+      apt:
+        packages:
+          - python-scipy
+
+
 install:
   - pip install coveralls
 
