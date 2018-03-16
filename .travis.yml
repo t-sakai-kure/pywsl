@@ -13,6 +13,7 @@ script:
 addons:
   apt:
     packages:
+      - gfortran
       - liblapack-dev
       - libatlas-base-dev
 
