@@ -1,4 +1,4 @@
-# pywsl: python codes for weakly supervised learning
+# pywsl: *py*thon codes for *w*eakly-*s*upervised *l*earning
 
 [![Build Status](https://travis-ci.org/t-sakai-kure/pywsl.svg?branch=master)](https://travis-ci.org/t-sakai-kure/pywsl)
 
