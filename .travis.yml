@@ -5,7 +5,7 @@ python:
 
 install:
   - pip install --upgrade pip setuptools wheel
-  - pip install --only-binary=numpy,scipy numpy scipy
+  - pip install numpy scipy
 
 script:
   - python setup.py test
