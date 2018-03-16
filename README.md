@@ -1,5 +1,6 @@
 # pywsl: **py**thon codes for **w**eakly-**s**upervised **l**earning
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Build Status](https://travis-ci.org/t-sakai-kure/pywsl.svg?branch=master)](https://travis-ci.org/t-sakai-kure/pywsl)
 
 This package contains the following implementation:
