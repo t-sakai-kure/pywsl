@@ -1,5 +1,7 @@
 # PNU Classification
 
+[![Build Status](https://travis-ci.org/t-sakai-kure/pywsl.svg?branch=master)](https://travis-ci.org/t-sakai-kure/pywsl)
+
 Codes for "Semi-supervised classification based on classification from positive and unlabeled data", ICML 2017,
 and "Semi-supervised AUC optimization based on positive-unlabeled learning", MLJ 2017.
 
