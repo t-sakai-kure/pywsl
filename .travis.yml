@@ -9,3 +9,10 @@ install:
 
 script:
   - python setup.py test
+
+addons:
+  apt:
+    packages:
+      - liblapack-dev
+      - libatlas-base-dev
+
