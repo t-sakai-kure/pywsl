@@ -2,33 +2,36 @@ import numpy as np
 import scipy as sp
 
 from sklearn.base import BaseEstimator
+from sklearn.utils.validation import check_is_fitted, check_X_y, check_array
 
-import comcalc as com
-import check
+import pywsl.utils.comcalc as com
+from pywsl.utils import check
 
 
 class PU_SL(BaseEstimator):
 
-    def __init__(self, prior, sigma=None, lam=1, basis='gauss', n_basis=200):
-        check.range(prior, 0, 1)
+#    def __init__(self, prior, sigma=None, lam=1, basis='gauss', n_basis=200):
+    def __init__(self, prior, sigma=.1, lam=1, basis='gauss', n_basis=200):
+        check.in_range(prior, 0, 1, name="prior")
         self.prior = prior
         self.basis = basis
         self.sigma = sigma
         self.lam = lam
         self.n_basis = n_basis
+#            if self.sigma is None:
+#                d_u = com.squared_dist(x_u, self._x_c)
+#                self.sigma = np.sqrt(np.median(d_u))
 
 
     def fit(self, x, y):
+        x, y = check_X_y(x, y, y_numeric=True)
         x_p, x_u = x[y == +1, :], x[y == 0, :]
         n_p, n_u = x_p.shape[0], x_u.shape[0]
 
         if self.basis == 'gauss':
             b = np.minimum(n_u, self.n_basis)
             center_index = np.random.permutation(n_u)[:b]
-            self.x_c = x_u[center_index, :]
-            if self.sigma is None:
-                d_u = com.squared_dist(x_u, self.x_c)
-                self.sigma = np.sqrt(np.median(d_u))
+            self._x_c = x_u[center_index, :]
         elif self.basis == 'lm':
             b = x_p.shape[1] + 1
         else:
@@ -39,12 +42,14 @@ class PU_SL(BaseEstimator):
         H = k_u.T.dot(k_u)/n_u
         h = 2*self.prior*np.mean(k_p, axis=0) - np.mean(k_u, axis=0)
         R = self.lam*np.eye(b)
-        self.coef_ = sp.linalg.sovle(H + R, h)
+        self.coef_ = sp.linalg.solve(H + R, h)
 
         return self
 
 
     def predict(self, x):
+        check_is_fitted(self, 'coef_')
+        x = check_array(x)
         return self._ker(x).dot(self.coef_)
 
 
@@ -57,7 +62,7 @@ class PU_SL(BaseEstimator):
 
     def _ker(self, x):
         if self.basis == 'gauss':
-            K = com.gauss_basis(com.squared_dist(x, self.x_c), self.sigma)
+            K = com.gauss_basis(com.squared_dist(x, self._x_c), self.sigma)
         elif self.basis == 'lm':
             K = com.homo_coord(x)
 

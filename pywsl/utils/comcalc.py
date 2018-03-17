@@ -13,7 +13,7 @@ def cv_index(n, fold):
     return index[np.random.permutation(n)]
 
 
-def sqaured_dist(x, c):
+def squared_dist(x, c):
 #    assert x.shape[1] == c.shape[1], "Dimension must be the same."
     return np.sum(x**2, axis=1, keepdims=True) \
         + np.sum(c**2, axis=1, keepdims=True).T \
