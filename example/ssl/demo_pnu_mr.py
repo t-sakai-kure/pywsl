@@ -10,7 +10,7 @@ sns.set(font_scale=2.0, rc={"lines.linewidth": 4.0})
 sns.set_style('ticks')
 
 
-import pywsl.pnu_mr.pnu_sl as pnu
+import pywsl.ssl.pnu_mr as pnu
 import pywsl.cpe.cpe_ene as cpe
 
 
