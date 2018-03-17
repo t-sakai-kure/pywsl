@@ -9,8 +9,7 @@ import seaborn as sns
 sns.set(font_scale=2.0, rc={"lines.linewidth": 4.0})
 sns.set_style('ticks')
 
-import sys
-sys.path.append('..')
+
 import pywsl.pnu_mr.pnu_sl as pnu
 import pywsl.cpe.cpe_ene as cpe
 
