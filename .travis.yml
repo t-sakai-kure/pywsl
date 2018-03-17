@@ -1,7 +1,12 @@
 language: python
 
+cache:
+  - pip
+
+
 python:
   - 3.6
+
 
 install:
   # See http://conda.pydata.org/docs/travis.html
@@ -24,14 +29,5 @@ install:
   - export LD_LIBRARY_PATH=$HOME/miniconda/envs/test-environment/lib/:$LD_LIBRARY_PATH
 
 
-
 script:
   - python setup.py test
-
-#addons:
-#  apt:
-#    packages:
-#      - gfortran
-#      - liblapack-dev
-#      - libatlas-base-dev
-
