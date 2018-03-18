@@ -20,7 +20,7 @@ install:
   # Useful for debugging any issues with conda
   - conda info -a
 
-  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION pytest pandas
+  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION pytest pandas nose
   - source activate test-environment
   - pip install --only-binary=numpy,scipy numpy scipy matplotlib sklearn
   - conda install mkl mkl-service
