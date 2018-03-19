@@ -28,4 +28,15 @@ def homo_coord(x):
     return np.c_[x, np.ones(x.shape[0])]
 
 
+def bin_clf_err(y_h, y_t, prior=None):
+    # check y_t
+    if prior:
+        f_p = np.mean(y_h[y_t == +1] <= 0)
+        f_n = np.mean(y_h[y_t == -1] >= 0)
+        err = prior*f_p + (1-prior)*f_n
+    else:
+        err = np.mean(y_h*y_t <= 0)
+
+    return err
+
 

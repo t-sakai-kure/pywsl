@@ -1,17 +1,17 @@
 import numpy as np
 import scipy as sp
 
-from sklearn.base import BaseEstimator
+from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.utils.validation import check_is_fitted, check_X_y, check_array
+from sklearn.utils.multiclass import check_classification_targets
 
 import pywsl.utils.comcalc as com
 from pywsl.utils import check
 
 
-class PU_SL(BaseEstimator):
+class PU_SL(BaseEstimator, ClassifierMixin):
 
-#    def __init__(self, prior, sigma=None, lam=1, basis='gauss', n_basis=200):
-    def __init__(self, prior, sigma=.1, lam=1, basis='gauss', n_basis=200):
+    def __init__(self, prior=.5, sigma=.1, lam=1, basis='gauss', n_basis=200):
         check.in_range(prior, 0, 1, name="prior")
         self.prior = prior
         self.basis = basis
@@ -24,7 +24,9 @@ class PU_SL(BaseEstimator):
 
 
     def fit(self, x, y):
-        x, y = check_X_y(x, y, y_numeric=True)
+        check_classification_targets(y)
+#        x, y = check_X_y(x, y, y_numeric=True)
+        x, y = check_X_y(x, y)
         x_p, x_u = x[y == +1, :], x[y == 0, :]
         n_p, n_u = x_p.shape[0], x_u.shape[0]
 
@@ -50,14 +52,15 @@ class PU_SL(BaseEstimator):
     def predict(self, x):
         check_is_fitted(self, 'coef_')
         x = check_array(x)
-        return self._ker(x).dot(self.coef_)
+        return np.sign(.1 + np.sign(self._ker(x).dot(self.coef_)))
 
 
     def score(self, x, y):
         x_p, x_u = x[y == +1, :], x[y == 0, :]
         k_p, k_u = self._ker(x[y == +1, :]), self._ker(x[y == 0, :])
         g_p, g_u = k_p.dot(self.coef_), k_u.dot(self.coef_)
-        return calc_risk(g_p, g_u, self.prior)
+        pu_risk = calc_risk(g_p, g_u, self.prior)
+        return 1 - pu_risk
 
 
     def _ker(self, x):
