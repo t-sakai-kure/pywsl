@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def gen_twonorm(n_l, prior_l, n_u, prior_u, n_t):
+def gen_twonorm_ssl(n_l, prior_l, n_u, prior_u, n_t):
     d = 2
     mu_p, mu_n = np.array([1, 1]), np.array([-1, -1])
 
