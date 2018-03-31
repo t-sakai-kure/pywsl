@@ -8,7 +8,7 @@ import numpy as np
 #import check
 
 
-def cv_index(n, fold):
+def cv_index(n, n_fold):
     index = (np.arange(n, dtype=np.int)*n_fold)//n
     return index[np.random.permutation(n)]
 
