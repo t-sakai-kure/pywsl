@@ -93,7 +93,7 @@ def pu_sl(x_p, x_u, prior, n_fold=5, model='gauss', sigma_list=None,
     else:
         raise ValueError('Invalid model: {} is not supported.'.format(model))
 
-    cv_index_p, cv_index_u = com.cv_index(n_p), com.cv_index(n_u)
+    cv_index_p, cv_index_u = com.cv_index(n_p, n_fold), com.cv_index(n_u, n_fold)
 
     score_cv_fold = np.empty(len(sigma_list), len(lambda_list), n_fold)
 
