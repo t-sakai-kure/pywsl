@@ -12,9 +12,12 @@ except ImportError:
 from chainer import Variable, functions as F
 from chainer import links as L
 from chainer.training import extensions
-from model import TLP
-from dataset import load_dataset
+from chainer.datasets import TupleDataset
 
+import numpy as np
+
+from model import TLP, MLP
+from pywsl.utils.datasets import load_dataset
 from pywsl.pul.chainer.functions.nnpu_risk import PU_Risk
 from pywsl.pul.chainer.functions.pu_accuracy import PU_Accuracy
 
@@ -35,11 +38,16 @@ def process_args():
                              "exp-cifar: The setting of CIFAR10 experiment in Experiment")
     parser.add_argument('--dataset', '-d', default='mnist', type=str, choices=['mnist', 'cifar10'],
                         help='The dataset name')
-    parser.add_argument('--labeled', '-l', default=100, type=int,
+    parser.add_argument('--n_p', default=100, type=int,
                         help='# of labeled data')
-    parser.add_argument('--unlabeled', '-u', default=59900, type=int,
+    parser.add_argument('--n_u', default=20000, type=int,
                         help='# of unlabeled data')
-    parser.add_argument('--epoch', '-e', default=100, type=int,
+    parser.add_argument('--nt_p', default=30, type=int,
+                        help='# of labeled data')
+    parser.add_argument('--nt_u', default=200, type=int,
+                        help='# of unlabeled data')
+#    parser.add_argument('--epoch', '-e', default=100, type=int,
+    parser.add_argument('--epoch', '-e', default=20, type=int,
                         help='# of epochs to learn')
     parser.add_argument('--beta', '-B', default=0., type=float,
                         help='Beta parameter of nnPU')
@@ -58,8 +66,10 @@ def process_args():
         chainer.cuda.check_cuda_available()
         chainer.cuda.get_device_from_id(args.gpu).use()
     if args.preset == "figure1":
-        args.labeled = 100
-        args.unlabeled = 59900
+        args.n_p = 100
+        args.n_u = 59900
+        args.nt_p = 50
+        args.nt_u = 500
         args.dataset = "mnist"
         args.batchsize = 30000
         args.model = "3lp"
@@ -78,11 +88,11 @@ def process_args():
         args.stepsize = 1e-5
     assert (args.batchsize > 0)
     assert (args.epoch > 0)
-    assert (0 < args.labeled < 30000)
+    assert (0 < args.n_p < 30000)
     if args.dataset == "mnist":
-        assert (0 < args.unlabeled <= 60000)
+        assert (0 < args.n_u <= 60000)
     else:
-        assert (0 < args.unlabeled <= 50000)
+        assert (0 < args.n_u <= 50000)
     assert (0. <= args.beta)
     assert (0. <= args.gamma <= 1.)
     return args
@@ -93,13 +103,44 @@ def select_loss(loss_name):
     return losses[loss_name]
 
 
+def pred(model, x, batchsize, gpu):
+    x = x.astype(np.float32)
+    tmp = np.ones(x.shape[0], np.int32)
+    it = chainer.iterators.SerialIterator(chainer.datasets.TupleDataset(x, tmp), batchsize,
+                                          repeat=False, shuffle=False)
+    h = np.empty((0, 1))
+    with chainer.configuration.using_config('Train', False):
+        with chainer.function.no_backprop_mode():
+            for batch in it:
+                x, y = chainer.dataset.convert.concat_examples(batch, gpu)
+                y = model.predictor(x)
+                y.to_cpu()
+                h = np.r_[h, y.array]
+    return h
+
+
 def main():
     args = process_args()
     # dataset setup
-    XYtrain, XYtest, prior = load_dataset(args.dataset, args.labeled, args.unlabeled)
-    dim = XYtrain[0][0].size // len(XYtrain[0][0])
+    prior = .5
+#    XYtrain, XYtest = load_dataset(args.dataset, args.n_p, args.n_u, args.nt_p, args.nt_u, prior)
+    data_name, x_p, x_n, x_u, y_u, x_t, y_t, x_vp, x_vn, x_vu, y_vu \
+        = load_dataset(0, 100, 100, 10000, prior, 100, n_vp=20, n_vn=20, n_vu=100)
+    print(x_p.shape, x_u.shape)
+#    dim = XYtrain[0][0].size // len(XYtrain[0][0])
+    x_p, x_n, x_u, x_t, x_vp, x_vn, x_vu = x_p.astype(np.float32), x_n.astype(np.float32), \
+        x_u.astype(np.float32), x_t.astype(np.float32), x_vp.astype(np.float32), \
+        x_vn.astype(np.float32), x_vu.astype(np.float32), 
+    XYtrain = TupleDataset(np.r_[x_p, x_u], np.r_[np.ones(100), np.zeros(10000)].astype(np.int32))
+    XYtest = TupleDataset(np.r_[x_vp, x_vu], np.r_[np.ones(20), np.zeros(100)].astype(np.int32))
     train_iter = chainer.iterators.SerialIterator(XYtrain, args.batchsize)
     test_iter = chainer.iterators.SerialIterator(XYtest, args.batchsize, repeat=False, shuffle=False)
+    y_tr = np.array([data[1] for data in XYtrain])
+    y_te = np.array([data[1] for data in XYtest])
+
+    print(np.histogram(y_tr))
+    print(np.sum(y_tr == 1), np.sum(y_tr == 0))
+#    sys.exit(0)
 
     # model setup
     loss_type = select_loss(args.loss)
@@ -107,7 +148,7 @@ def main():
     pu_acc = PU_Accuracy(prior)
 
 #    model = L.Classifier(TLP(), lossfun=nnpu_loss, accfun=pu_acc)
-    model = L.Classifier(TLP(), lossfun=nnpu_loss)
+    model = L.Classifier(MLP(), lossfun=nnpu_loss, accfun=pu_acc)
     if args.gpu >= 0:
         chainer.backends.cuda.get_device_from_id(args.gpu).use()
         model.to_gpu(args.gpu)
@@ -126,6 +167,10 @@ def main():
                 ['epoch', 'main/loss', 'validation/main/loss',
                  'main/accuracy', 'validation/main/accuracy', 
                  'elapsed_time']))
+    key = 'validation/main/accuracy'
+    model_name = 'model'
+    trainer.extend(extensions.snapshot_object(model, model_name),
+                   trigger=chainer.training.triggers.MaxValueTrigger(key))
     if extensions.PlotReport.available():
             trainer.extend(
                 extensions.PlotReport(['main/loss', 'validation/main/loss'], 'epoch', file_name=f'loss_curve.png'))
@@ -136,7 +181,6 @@ def main():
     print("prior: {}".format(prior))
     print("loss: {}".format(args.loss))
     print("batchsize: {}".format(args.batchsize))
-#    print("model: {}".format(selected_model))
     print("beta: {}".format(args.beta))
     print("gamma: {}".format(args.gamma))
     print("")
@@ -145,5 +189,11 @@ def main():
     trainer.run()
 
 
-if __name__ == '__main__':
+#    yh = pred(selected_model, x_t, args.batchsize, args.gpu)
+    yh = pred(model, x_t, args.batchsize, args.gpu)
+    mr = prior*np.mean(yh[y_t == +1] <= 0) + (1-prior)*np.mean(yh[y_t == -1] >= 0)
+    print("mr: {}".format(mr))
+
+
+if __name__ == "__main__":
     main()

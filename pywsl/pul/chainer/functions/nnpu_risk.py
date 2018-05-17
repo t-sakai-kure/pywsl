@@ -17,7 +17,8 @@ class PU_Risk(function.Function):
         self.loss_func = loss
         self.nnPU = nnPU
         self.positive = 1
-        self.unlabeled = -1
+        self.unlabeled = 0
+#        self.unlabeled = -1
 
     def check_type_forward(self, in_types):
         type_check.expect(in_types.size() == 2)
@@ -59,7 +60,7 @@ class PU_Risk(function.Function):
         return gx, None
 
 
-def pu_loss(x, t, prior, loss=(lambda x: F.sigmoid(-x)), nnPU=True):
+def pu_risk(x, t, prior, loss=(lambda x: F.sigmoid(-x)), nnPU=True):
     """wrapper of loss function for non-negative/unbiased PU learning
 
         .. math::
@@ -91,4 +92,4 @@ def pu_loss(x, t, prior, loss=(lambda x: F.sigmoid(-x)), nnPU=True):
         "Convex formulation for learning from positive and unlabeled data."
         Proceedings of The 32nd International Conference on Machine Learning. 2015.
     """
-    return PULoss(prior=prior, loss=loss, nnPU=nnPU)(x, t)
+    return PU_Risk(prior=prior, loss=loss, nnPU=nnPU)(x, t)

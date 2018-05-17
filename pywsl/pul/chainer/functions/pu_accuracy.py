@@ -8,7 +8,8 @@ class PU_Accuracy(function.Function):
     def __init__(self, prior):
         self.prior = prior
         self.positive = 1
-        self.unlabeled = -1
+        self.unlabeled = 0
+#        self.unlabeled = -1
 
     def check_type_forward(self, in_types):
         type_check.expect(in_types.size() == 2)
