@@ -6,8 +6,10 @@
 This package contains the following implementation:
 - ***Unbiased PU learning***  
   &nbsp;&nbsp;&nbsp; in "Convex formulation for learning from positive and unlabeled data", ICML, 2015 [[uPU]](#uPU)
+- ***Non-negative PU Learning***  
+  &nbsp;&nbsp;&nbsp; in "Positive-unlabeled learning with non-negative risk estimator", NIPS, 2017 [[nnPU]](#nnPU)
 - ***PU Set Kernel Classifier***  
-  &nbsp;&nbsp;&nbsp; in "Convex formulation of multiple instance learning from positive and unlabeled bags", arXiv, 2017 [[PU-SKC]](#pu-skc)
+  &nbsp;&nbsp;&nbsp; in "Convex formulation of multiple instance learning from positive and unlabeled bags", Neural Networks, 2018 [[PU-SKC]](#pu-skc)
 - ***Class-prior estimation based on energy distance***  
   &nbsp;&nbsp;&nbsp; in "Computationally efficient class-prior estimation under class balance change using energy distance", IEICE-ED, 2016 [[CPE-ENE]](#cpe_ene).
 - ***PNU classification***  
@@ -18,21 +20,26 @@ This package contains the following implementation:
 ## Contributors
 - [Tomoya Sakai](https://t-sakai-kure.github.io)
 - [Han Bao](http://levelfour.github.io)
+- [Ryuichi Kiryo](https://github.com/kiryor)
 
 ## References
-1. <a name="uPU"> du Plessis, M. C., Niu, G., & Sugiyama, M.   
+1. <a name="uPU"> du Plessis, M. C., Niu, G., and Sugiyama, M.   
   Convex formulation for learning from positive and unlabeled data.   
-  In F. Bach and D. Blei (Eds.), Proceedings of 32nd International Conference on Machine Learning (ICML2015), 
+  In Bach, F. and Blei, D. (Eds.), Proceedings of 32nd International Conference on Machine Learning,
   JMLR Workshop and Conference Proceedings, vol.37, pp.1386-1394, Lille, France, Jul. 6-11, 2015. 
-1. <a name="pu-skc"> Bao, H., Sakai, T., Sato, I., Sugiyama, M.  
+1. <a name="nnPU"> Kiryo, R., Niu, G., du Plessis, M. C., and Sugiyama, M.   
+  Positive-unlabeled learning with non-negative risk estimator.  
+  In Guyon, I.,  Luxburg, U. V., Bengio, S., Wallach, H., Fergus, R., Vishwanathan, S., and Garnett, R. (Eds.), 
+  Advances in Neural Information Processing Systems 30, pp.1674-1684, 2017.   
+1. <a name="pu-skc"> Bao, H., Sakai, T., Sato, I., and Sugiyama, M.  
   Convex formulation of multiple instance learning from positive and unlabeled bags.  
-  arXiv:1704.06767, 2017.
-1. <a name="cpe_ene"> Kawakubo, H., du Plessis, M. C., & Sugiyama, M.  
+  Neural Networks, vol.105, pp.132-141, 2018.  
+1. <a name="cpe_ene"> Kawakubo, H., du Plessis, M. C., and Sugiyama, M.  
   Computationally efficient class-prior estimation under class balance change using energy distance.   
   IEICE Transactions on Information and Systems, vol.E99-D, no.1, pp.176-186, 2016.
-1. <a name="pnu_mr"> Sakai, T., du Plessis, M. C., Niu, G., & Sugiyama, M.   
+1. <a name="pnu_mr"> Sakai, T., du Plessis, M. C., Niu, G., and Sugiyama, M.   
   Semi-supervised classification based on classification from positive and unlabeled data.   
-  In D. Precup and Y. W. Teh (Eds.), Proceedings of 34th International Conference on Machine Learning (ICML2017), Proceedings of Machine Learning Research, vol.70, pp.2998-3006, Sydney, Australia, Aug. 6-12, 2017.  
-1. <a name="pnu_auc"> Sakai, T., Niu, G., & Sugiyama, M.   
+  In Precup, D. and Teh, Y. W. (Eds.), Proceedings of 34th International Conference on Machine Learning, Proceedings of Machine Learning Research, vol.70, pp.2998-3006, Sydney, Australia, Aug. 6-12, 2017.  
+1. <a name="pnu_auc"> Sakai, T., Niu, G., and Sugiyama, M.   
   Semi-supervised AUC optimization based on positive-unlabeled learning.   
   Machine Learning, vol.107, no.4, pp.767-794, 2018.   
