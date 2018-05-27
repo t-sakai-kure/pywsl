@@ -22,7 +22,7 @@ install:
 
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION pytest pandas nose
   - source activate test-environment
-  - pip install --only-binary=numpy,scipy numpy scipy matplotlib sklearn
+  - pip install --only-binary=numpy,scipy numpy scipy matplotlib sklearn chainer
   - conda install mkl mkl-service
 
   # set library path
