@@ -20,6 +20,6 @@ class Timer:
     self.record = False
     self.ptime  = float('nan')
     if not quiet:
-      print('Elapsed time: {:.2f} [sec]\n'.format(etime))
+      print('Elapsed time: {:.2f} [sec]'.format(etime))
     return etime
 
