@@ -2,6 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Build Status](https://travis-ci.org/t-sakai-kure/pywsl.svg?branch=master)](https://travis-ci.org/t-sakai-kure/pywsl)
+[![PyPI version](https://badge.fury.io/py/pywsl.svg)](https://badge.fury.io/py/pywsl)
 
 This package contains the following implementation:
 - ***Unbiased PU learning***  
@@ -16,6 +17,11 @@ This package contains the following implementation:
   &nbsp;&nbsp;&nbsp; in "Semi-supervised classification based on classification from positive and unlabeled data", ICML 2017 [[PNU]](#pnu_mr).
 - ***PNU-AUC optimization***  
   &nbsp;&nbsp;&nbsp; in "Semi-supervised AUC optimization based on positive-unlabeled learning", MLJ 2018 [[PNU-AUC]](#pnu_auc).
+
+## Installation
+```sh
+$ pip install pywsl
+```
 
 ## Contributors
 - [Tomoya Sakai](https://t-sakai-kure.github.io)
