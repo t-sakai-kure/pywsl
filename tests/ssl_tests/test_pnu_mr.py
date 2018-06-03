@@ -43,8 +43,8 @@ class TestPNU_SL(unittest.TestCase):
         n_t = 100
         eta_list = np.arange(-.9, 1, .1)
         x, y, x_tp, x_tn = gendata(n_l, prior_l, n_u, prior_u, n_t)
-        f_dec, outs, funcs = pnu_mr.PNU_SL(x, y, prior_u, 
-                                           eta_list, model='lm', 
+        f_dec, outs, funcs = pnu_mr.PNU_SL_FastCV(x, y, prior_u, 
+                                           eta_list, basis='lm', 
                                            nargout=3)
         err = 100*calc_err(f_dec, x_tp, x_tn, prior_u)
 
@@ -55,8 +55,8 @@ class TestPNU_SL(unittest.TestCase):
         n_t = 100
         x, y, x_tp, x_tn = gendata(n_l, prior_l, n_u, prior_u, n_t)
         eta_list = [pnu_mr.calc_etab(np.sum(y == +1), np.sum(y == -1), prior_u)]
-        f_dec, outs, funcs = pnu_mr.PNU_SL(x, y, prior_u, 
-                                           eta_list, model='lm', 
+        f_dec, outs, funcs = pnu_mr.PNU_SL_FastCV(x, y, prior_u, 
+                                           eta_list, basis='lm', 
                                            nargout=3)
         err = 100*calc_err(f_dec, x_tp, x_tn, prior_u)
 
@@ -67,10 +67,10 @@ class TestPNU_SL(unittest.TestCase):
         x, y, x_tp, x_tn = gendata(n_l, prior_l, n_u, prior_u, n_t)
         eta_list = [pnu_mr.calc_etab(np.sum(y == +1), np.sum(y == -1), prior_u)]
         lambda_list = [.1]
-        f_dec, outs, funcs = pnu_mr.PNU_SL(x, y, prior_u, 
+        f_dec, outs, funcs = pnu_mr.PNU_SL_FastCV(x, y, prior_u, 
                                            eta_list, 
                                            lambda_list=lambda_list,
-                                           model='lm', nargout=3)
+                                           basis='lm', nargout=3)
         err = 100*calc_err(f_dec, x_tp, x_tn, prior_u)
 
 
@@ -81,9 +81,9 @@ class TestPNU_SL(unittest.TestCase):
         x, y, x_tp, x_tn = gendata(n_l, prior_l, n_u, prior_u, n_t)
         eta_list = [pnu_mr.calc_etab(np.sum(y == +1), np.sum(y == -1), prior_u)]
         lambda_list = [.1]
-        f_dec, outs = pnu_mr.PNU_SL(x, y, prior_u, 
-                                    eta_list, lambda_list=lambda_list,
-                                    model='lm', nargout=2)
+        f_dec, outs = pnu_mr.PNU_SL_FastCV(x, y, prior_u, 
+                                           eta_list, lambda_list=lambda_list,
+                                           basis='lm', nargout=2)
         err = 100*calc_err(f_dec, x_tp, x_tn, prior_u)
 
 
@@ -94,8 +94,8 @@ class TestPNU_SL(unittest.TestCase):
         x, y, x_tp, x_tn = gendata(n_l, prior_l, n_u, prior_u, n_t)
         eta_list = [pnu_mr.calc_etab(np.sum(y == +1), np.sum(y == -1), prior_u)]
         lambda_list = [.1]
-        f_dec = pnu_mr.PNU_SL(x, y, prior_u, eta_list, lambda_list=lambda_list,
-                              model='lm', nargout=1)
+        f_dec = pnu_mr.PNU_SL_FastCV(x, y, prior_u, eta_list, lambda_list=lambda_list,
+                                     basis='lm', nargout=1)
         err = 100*calc_err(f_dec, x_tp, x_tn, prior_u)
 
 
@@ -106,8 +106,8 @@ class TestPNU_SL(unittest.TestCase):
         lambda_list = [.1]
         x, y, x_tp, x_tn = gendata(n_l, prior_l, n_u, prior_u, n_t)
         eta_list = [pnu_mr.calc_etab(np.sum(y == +1), np.sum(y == -1), prior_u)]
-        f_dec, outs, funcs = pnu_mr.PNU_SL(x, y, prior_u, 
-                                           eta_list, model='gauss', 
+        f_dec, outs, funcs = pnu_mr.PNU_SL_FastCV(x, y, prior_u, 
+                                           eta_list, basis='gauss', 
                                            lambda_list=lambda_list,
                                            nargout=3)
         err = 100*calc_err(f_dec, x_tp, x_tn, prior_u)
@@ -121,7 +121,7 @@ class TestPNU_SL(unittest.TestCase):
         y[0] = 2
         eta_list = [pnu_mr.calc_etab(np.sum(y == +1), np.sum(y == -1), prior_u)]
         with self.assertRaises(ValueError):
-            pnu_mr.PNU_SL(x, y, prior_u, eta_list, model='lm')
+            pnu_mr.PNU_SL_FastCV(x, y, prior_u, eta_list, basis='lm')
 
     def test_model_specification_error(self):
         n_l, prior_l = 30, .3
@@ -130,7 +130,7 @@ class TestPNU_SL(unittest.TestCase):
         x, y, x_tp, x_tn = gendata(n_l, prior_l, n_u, prior_u, n_t)
         eta_list = [pnu_mr.calc_etab(np.sum(y == +1), np.sum(y == -1), prior_u)]
         with self.assertRaises(ValueError):
-            pnu_mr.PNU_SL(x, y, prior_u, eta_list, model='DNN')
+            pnu_mr.PNU_SL_FastCV(x, y, prior_u, eta_list, basis='DNN')
 
 
     def test_calc_etab(self):
@@ -141,7 +141,6 @@ class TestPNU_SL(unittest.TestCase):
             if prior < .5:
                 self.assertTrue(eta > 0)
             elif prior > .5:
-                print(eta)
                 self.assertTrue(eta < 0)
             else:
                 self.assertTrue(eta == 0)
