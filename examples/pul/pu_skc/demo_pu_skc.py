@@ -21,8 +21,8 @@ def main():
                        cv=5, n_jobs=-1)
     clf.fit(x, y)
     y_h = clf.predict(x_t)
-    err = bin_clf_err(y_h, y_t, prior)
-    print("MR: {}%".format(err*100))
+    err = 100*bin_clf_err(y_h, y_t, prior)
+    print("MR: {}%".format(err))
 
 
 if __name__ == "__main__":
