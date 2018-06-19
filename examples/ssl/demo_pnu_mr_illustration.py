@@ -65,7 +65,7 @@ if __name__ == "__main__":
         priorh = cpe.cpe(x[y != 0, :], y[y != 0], x[y == 0, :])
         f_dec, outs, funcs = pnu.PNU_SL_FastCV(x, y, priorh, eta_list, 
                                                lambda_list=[.1], 
-                                               model='lm', nargout=3)
+                                               basis='lm', nargout=3)
         errs1[ite] = 100*calc_err(f_dec, x_tp, x_tn, prior_u)
         if errs1[ite] < best_err:
             best_err = errs1[ite]
