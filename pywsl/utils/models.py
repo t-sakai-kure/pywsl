@@ -36,8 +36,8 @@ class MLP(Chain):
 
     def __call__(self, x):
         h = self.af(self.b1(self.l1(x)))
-        h = self.af(self.b2(self.l2(x)))
-        h = self.af(self.b3(self.l3(x)))
+        h = self.af(self.b2(self.l2(h)))
+        h = self.af(self.b3(self.l3(h)))
         h = self.l4(h)
         return h
 
