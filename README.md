@@ -23,7 +23,7 @@ This package contains the following implementation:
 $ pip install pywsl
 ```
 
-## Contributors
+## Main contributors
 - [Tomoya Sakai](https://t-sakai-kure.github.io)
 - [Han Bao](http://levelfour.github.io)
 - [Ryuichi Kiryo](https://github.com/kiryor)
