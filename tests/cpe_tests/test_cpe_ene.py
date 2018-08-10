@@ -16,7 +16,7 @@ class TestCpe_Ene(unittest.TestCase):
         y_l = y[y != 0]
         x_u = x[y == 0, :]
         priorh = cpe_ene.cpe(x_l, y_l, x_u)
-        prior_lower, prior_upper = prior - .1, prior + 1.
+        prior_lower, prior_upper = prior - .1, prior + .1
         self.assertTrue(prior_lower < priorh and priorh < prior_upper)
 
     def test_alpha_half(self):
@@ -28,7 +28,7 @@ class TestCpe_Ene(unittest.TestCase):
         y_l = y[y != 0]
         x_u = x[y == 0, :]
         priorh = cpe_ene.cpe(x_l, y_l, x_u, alpha=.5)
-        prior_lower, prior_upper = prior - .1, prior + 1.
+        prior_lower, prior_upper = prior - .1, prior + .1
         print(priorh)
 
 
