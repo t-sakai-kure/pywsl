@@ -1,5 +1,5 @@
 import numpy as np
-from sklearn.datasets import fetch_mldata
+from sklearn.datasets import fetch_openml
 from chainer.datasets import TupleDataset
 
 
@@ -33,8 +33,8 @@ def load_dataset(data_id, n_p, n_n, n_u, prior, n_t, n_vp=None, n_vn=None, n_vu=
 
 
 def get_mnist():
-    mnist = fetch_mldata('MNIST original', data_home='~')
-    x, y = mnist.data, mnist.target
+    x, y = fetch_openml('mnist_784', data_home='~', version=1, return_X_y=True)
+    y = y.astype(np.int)
     return x, y
 
 def binarize_mnist(org_y):
