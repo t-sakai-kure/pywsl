@@ -1,3 +1,4 @@
+setuptools>=46.0.0
 chainer>=4.2.0
 cvxopt>=1.2.0
 cvxpy>=1.0.6
